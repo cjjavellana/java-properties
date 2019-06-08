@@ -1,6 +1,7 @@
 import { PropertiesFile, of } from '../src/index';
 import { expect } from 'chai';
 import { fork } from "child_process";
+import { AESCBC } from '../src/crypto';
 
 let props: PropertiesFile;
 
@@ -290,5 +291,14 @@ describe('properties', () => {
         httpServer.kill()
       }
     });
+  });
+  it('decrypts an encrypted property value (using key & derived iv)', () => {
+    let decryptor = new AESCBC('YWFhYmJiY2NjZGRkZWVlZg==');
+
+    let myFile = new PropertiesFile('test/fixtures/encrypted.properties');
+    myFile.withDecryptor(decryptor);
+    
+    test.equal('The quick brown fox jumped over the table', myFile.get('value.1'))
+    test.equal('foobar', myFile.get('value.2'))
   });
 });

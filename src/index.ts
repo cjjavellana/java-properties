@@ -6,14 +6,21 @@
  */
 
 import fs from 'fs';
+import { Decryptor } from './crypto';
 
 class PropertiesFile {
   objs: { [key: string]: any };
+  private decryptor?: Decryptor;
+
   constructor(...args: string[]) {
     this.objs = {};
     if (args.length) {
       this.of.apply(this, args);
     }
+  }
+
+  withDecryptor(decryptor?: Decryptor) {
+    this.decryptor = decryptor;
   }
 
   makeKeys(line: string) {
@@ -156,12 +163,21 @@ class PropertiesFile {
   }
 
   interpolate(s: string): string {
+    s = this.decryptIfEncrypted(s);
     let me = this;
     return s
       .replace(/\\\\/g, '\\')
       .replace(/\$\{([A-Za-z0-9\.\-\_]*)\}/g, function(match) {
         return me.getLast(match.substring(2, match.length - 1))!;
       });
+  }
+
+  decryptIfEncrypted(s: string): string {
+    let pattern = /\[enc\]\[(?<encrypted>.*)\]/i;
+    let matcher = s.match(pattern);
+    return (this.decryptor && matcher && matcher.groups) 
+      ? this.decryptor.decrypt(matcher.groups.encrypted) 
+      : s;
   }
 
   getKeys() {
