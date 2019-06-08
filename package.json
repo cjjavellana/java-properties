@@ -61,15 +61,17 @@
     "@types/node": "^11.10.4",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.3333"
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.1"
   },
   "keywords": [
     "java",
     "properties"
   ],
   "dependencies": {
+    "@types/aes-js": "^3.1.0",
     "@types/request": "^2.48.1",
+    "aes-js": "^3.1.2",
     "request": "^2.88.0",
     "sync-request": "^6.1.0"
   }
